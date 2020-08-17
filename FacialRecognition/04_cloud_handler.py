@@ -81,7 +81,7 @@ def getFaceid(filename_key):
     if match:
         name_key = match.group(1)
     else:
-        printf("ERROR - input name should have number: e.g. vijesh1.jpg")
+        print("ERROR - input name should have number: e.g. vijesh1.jpg")
     print("getFaceid: name:" + name_key)
     face_id = getFaceidFromDictionary(name_key)
     return face_id
@@ -163,7 +163,7 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 # iniciate id counter
 id = 0
 # names related to ids: example ==> Marcelo: id=1,  etc
-names = ['None', 'VIJESH', 'SURYA', 'Ilza', 'Z', 'W']
+names = ['None', 'RASHMIKA', 'KATRINA', 'SHRUTHI', 'Ilza', 'Z', 'W']
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(0)
 cam.set(3, 640)  # set video widht
