@@ -6,10 +6,10 @@ import re
 import urllib.request
 import firebase_admin
 import smtplib, ssl
-# from firebase import Firebase
 from firebase_admin import credentials, storage
 import numpy as np
 from PIL import Image
+import csv
 
 DOWNLOAD_FOLDER = "downloaded_images"
 DATASET_NEW_FOLDER = "dataset_new"
@@ -36,17 +36,31 @@ def downloadDataForDataSet():
             print(fileUrl)
             urllib.request.urlretrieve(fileUrl, DOWNLOAD_FOLDER+"/"+fileName)
 
+# Download images from firebase. These images needs to be recognised.
+#downloadDataForDataSet()  #TODO frequent access to firebase not working correctly. Hence commented.
 
-#downloadDataForDataSet()
 
-import csv
 
 csv_reader = {}
 with open('FaceDetails.csv', mode='r') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     print("Dict created.")
 
+# Python 3 program to split an alphanumeric string. hello123 will return hello
+def getStringFromAlphaNumString(str):
+    alpha = ""
+    num = ""
+    special = ""
+    for i in range(len(str)):
+        if (str[i].isdigit()):
+            num = num+ str[i]
+        elif((str[i] >= 'A' and str[i] <= 'Z') or (str[i] >= 'a' and str[i] <= 'z')):
+            alpha += str[i]
+        else:
+            special += str[i]
+    return alpha
 
+# Name, id and email is stored in a csv file.
 def getFaceidFromDictionary(name):
     # print ("CSV nameid value for : "+ name + ": " + csv_reader[name])
     try:
@@ -77,12 +91,7 @@ def getFaceidFromDictionary(name):
 def getFaceid(filename_key):
     filename, extention = os.path.splitext(filename_key)  # removing extension from filename
     # print(filename)
-    match = re.match(r"([a-z]+)([0-9]+)", filename, re.I)
-    name_key = ""
-    if match:
-        name_key = match.group(1)
-    else:
-        print("ERROR - input name should have number: e.g. vijesh1.jpg")
+    name_key = getStringFromAlphaNumString(filename)
     print("getFaceid: name:" + name_key)
     face_id = getFaceidFromDictionary(name_key)
     return face_id
@@ -218,7 +227,7 @@ def RecogFace(filePath):
         if (confidence < 100):
             # id = names[id]
             faceName = getNameFromId(id)
-            sendMail(emails[id])
+            #sendMail(emails[id])
             confidence = "  {0}%".format(round(100 - confidence))
             print(filePath + ":  " + faceName)
         else:
