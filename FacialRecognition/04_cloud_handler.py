@@ -5,6 +5,7 @@ import cv2
 import re
 import urllib.request
 import firebase_admin
+import smtplib, ssl
 # from firebase import Firebase
 from firebase_admin import credentials, storage
 import numpy as np
@@ -152,6 +153,27 @@ def CREATE_MODEL():
 CREATE_MODEL()
 
 # ***********************************************************************************************************
+
+def sendMail(receiver_email):
+    port = 587  # For starttls
+    smtp_server = "smtp.gmail.com"
+    sender_email = "projecttesting535@gmail.com"
+    # receiver_email = "projecttesting535@gmail.com"
+    password = input("Type your password and press enter:") #TODO this must be replaced with actual password.
+    message = """\
+        Subject: Hi Sir    
+        You have violated mask rules inside teh campus. Request you to follow rules strictly."""
+    context = ssl.create_default_context()
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.ehlo()  # Can be omitted
+        server.starttls(context=context)
+        server.ehlo()  # Can be omitted
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message)
+
+
+
+
 # Trying to recognize faces
 RECOG_FOLDER = "ForRecognition"
 
@@ -163,7 +185,8 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 # iniciate id counter
 id = 0
 # names related to ids: example ==> Marcelo: id=1,  etc
-names = ['None', 'RASHMIKA', 'KATRINA', 'SHRUTHI', 'Ilza', 'Z', 'W']
+names = ['None', 'RASHMIKA', 'KATRINA', 'SHRUTHI','Vijesh']
+emails = ['None','projecttesting535@gmail.com','projecttesting535@gmail.com','projecttesting535@gmail.com','projecttesting535@gmail.com']
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(0)
 cam.set(3, 640)  # set video widht
@@ -195,6 +218,7 @@ def RecogFace(filePath):
         if (confidence < 100):
             # id = names[id]
             faceName = getNameFromId(id)
+            sendMail(emails[id])
             confidence = "  {0}%".format(round(100 - confidence))
             print(filePath + ":  " + faceName)
         else:
